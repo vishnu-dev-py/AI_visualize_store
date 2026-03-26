@@ -5,7 +5,7 @@ from rest_framework.response import Response
 
 from .models import UploadedScene, DetectedObject
 from .serializers import UploadedSceneSerializer
-from .detector import detect_objects
+from .yolo_detector import detect_objects_yolo
 from products.models import Product
 from products.serializers import ProductSerializer
 
@@ -23,7 +23,7 @@ class SceneUploadView(APIView):
 
         scene = UploadedScene.objects.create(image=image)
 
-        detections = detect_objects(scene.image.path)
+        detections = detect_objects_yolo(scene.image.path)
         saved_objects = []
 
         for item in detections:

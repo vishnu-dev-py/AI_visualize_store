@@ -199,15 +199,15 @@
 
         .object-dot {
             position: absolute;
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.95);
-            border: 3px solid rgba(15, 23, 42, 0.45);
+            background: #22c55e; /* green */
+            border: 3px solid white;
             transform: translate(-50%, -50%);
             cursor: pointer;
             z-index: 4;
-            box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.20);
+            box-shadow: 0 0 0 8px rgba(34, 197, 94, 0.25);
         }
 
         .object-dot:hover {
@@ -215,16 +215,16 @@
         }
 
         .object-label-badge {
-            position: absolute;
-            transform: translate(-50%, calc(-100% - 10px));
-            background: rgba(15, 23, 42, 0.88);
-            color: white;
-            padding: 6px 10px;
-            border-radius: 999px;
-            font-size: 12px;
-            white-space: nowrap;
-            z-index: 4;
-        }
+    position: absolute;
+    transform: translate(-50%, calc(-100% - 10px));
+    background: #111827;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 4;
+}
 
         .focus-box {
             position: absolute;
@@ -336,10 +336,11 @@
 
         <div class="col">
             <div class="card">
-                <h2>Upload Room Image</h2>
+                <h2>Upload Styled Room Image</h2>
+                <p class="muted">Upload your already designed room image to detect objects</p>
                 <form id="sceneForm">
                     <input type="file" id="sceneImage" accept="image/*" required>
-                    <button type="submit">Search Objects</button>
+                    <button type="submit" id="detectBtn">Detect Objects</button>
                     <div id="sceneMsg" class="status"></div>
                 </form>
 
@@ -522,6 +523,14 @@
         const file = document.getElementById("sceneImage").files[0];
         if (!file) return;
 
+        const detectBtn = document.getElementById("detectBtn");
+
+        // 🔥 Loading UI
+        detectBtn.innerText = "Detecting...";
+        detectBtn.disabled = true;
+        sceneMsg.innerHTML = "Analyzing image...";
+        sceneMsg.className = "status";
+
         const formData = new FormData();
         formData.append("image", file);
 
@@ -538,7 +547,7 @@
                 currentDetections = data.detections || [];
                 selectedObjectId = null;
 
-                sceneMsg.innerHTML = "Scene uploaded successfully";
+                sceneMsg.innerHTML = "Detection complete ✔";
                 sceneMsg.className = "status";
 
                 scenePreview.src = data.image;
@@ -557,9 +566,13 @@
                 sceneMsg.className = "status error";
             }
         } catch (error) {
-            sceneMsg.innerHTML = "Scene upload failed";
+            sceneMsg.innerHTML = "Detection failed";
             sceneMsg.className = "status error";
         }
+
+        // 🔥 Reset button
+        detectBtn.innerText = "Detect Objects";
+        detectBtn.disabled = false;
     });
 
     async function loadSuggestions(sceneId, objectId, label) {
